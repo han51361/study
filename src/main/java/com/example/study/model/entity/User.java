@@ -2,14 +2,15 @@ package com.example.study.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-
-@AllArgsConstructor
-@Entity // =table
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity // =table
 public class User {
     //jpa entity 는 camel case -> DB의 snake_case로 바꾼다.
     @Id
@@ -27,7 +28,4 @@ public class User {
     private String updatedBy;
 
 
-    public User() {
-
-    }
 }
