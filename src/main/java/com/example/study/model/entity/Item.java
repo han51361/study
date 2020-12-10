@@ -26,6 +26,11 @@ public class Item {
 
 
    //1 : N
+    //Fetch Type
+    // Lazy = 지연로딩 Eager = 즉시로딩
+    // lazy = select * from item where id =?
+    // Eager =  Join Item.item id = detail.itemid Join User.user_id = detail.user_id
+    // 따라서  Eager = 1:1
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "item")
     private List<OrderDetail> orderDetailList;
 }
