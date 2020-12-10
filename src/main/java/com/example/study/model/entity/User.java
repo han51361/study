@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -19,13 +20,19 @@ public class User {
 
     private  String account;
     private  String email;
-    private  String phoneNumber;   //sql의 변수명과 달라도 jpa 에서 자동으로 변환해준다.
+    private  String phoneNumber;
     private LocalDateTime createdAt;
     private String createdBy;
 
     private  LocalDateTime updatedAt;
 
     private String updatedBy;
+
+
+    //1 : N fetch 타입 걸어두기
+    // 1: N 관계여서 orderDeetail 은 List 형태로 받아온다.
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<OrderDetail> orderDetailList;
 
 
 }

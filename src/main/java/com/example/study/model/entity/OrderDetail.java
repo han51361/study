@@ -4,18 +4,17 @@ package com.example.study.model.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.tomcat.jni.Local;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@ToString(exclude = {"user","item"})
 public class OrderDetail {
 
     @Id
@@ -24,7 +23,11 @@ public class OrderDetail {
 
     private LocalDateTime orderAt;
 
-    private  Long userId;
 
-    private  Long itemId;
+    // N(Orderdetail) : 1(user)
+    @ManyToOne
+    private  User user;
+
+    @ManyToOne
+    private Item item;
 }
