@@ -19,8 +19,17 @@ public class User {
     private  Long id;
 
     private  String account;
+    private String password;
+
+    private String status;
+
     private  String email;
     private  String phoneNumber;
+
+    private LocalDateTime registeredAt;
+
+    private LocalDateTime unregisteredAt;
+
     private LocalDateTime createdAt;
     private String createdBy;
 
@@ -29,10 +38,6 @@ public class User {
     private String updatedBy;
 
 
-    //1 : N fetch 타입 걸어두기
-    // 1: N 관계여서 orderDeetail 은 List 형태로 받아온다.
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<OrderDetail> orderDetailList;
 
 
 }

@@ -8,26 +8,36 @@ import lombok.ToString;
 import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@ToString(exclude = {"user","item"})
+
 public class OrderDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String status;
+
     private LocalDateTime orderAt;
 
+    private LocalDateTime arrivalDate;
 
-    // N(Orderdetail) : 1(user)
-    @ManyToOne
-    private  User user;
+    private Integer quantity;
 
-    @ManyToOne
-    private Item item;
+    private BigDecimal totalPrice;
+
+    private LocalDateTime createdAt;
+
+    private String createdBy;
+
+    private LocalDateTime updatedAt;
+
+    private String updatedBy;
+
 }
