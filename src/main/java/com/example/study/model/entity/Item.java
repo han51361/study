@@ -22,11 +22,12 @@ public class Item {
     private String status;
 
    private String name;
-
+   private String title;
    private String content;
    private Integer price;
 
    private String brandName;
+   private  Long partnerId;
 
    private LocalDateTime registeredAt;
 
