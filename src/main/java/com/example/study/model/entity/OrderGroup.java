@@ -41,7 +41,6 @@ public class OrderGroup {
 
     private LocalDateTime arrivalDate;
 
-
     private LocalDateTime createdAt;
 
     private String createdBy;
