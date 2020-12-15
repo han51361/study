@@ -23,24 +23,30 @@ public class UserRepositoryTest extends StudyApplicationTests {
     public void create(){
         User user = new User(); //Singleton
 
-       String account = "Test01";
-       String password = "Test01";
+       String account = "Test03";
+       String password = "Test03";
        String status = "Registered";
        String email = "Test01@gmail.com";
-       String phoneNumber = "010-1111-2222";
+       String phoneNumber = "010-1111-3333";
        LocalDateTime registeredAt = LocalDateTime.now();
-       LocalDateTime createdAt = LocalDateTime.now();
-       String createdBy = "AdminServer";
+
 
     user.setAccount(account);
-    user.setCreatedBy(createdBy);
+
     user.setPhoneNumber(phoneNumber);
     user.setPassword(password);
     user.setStatus(status);
     user.setEmail(email);
     user.setRegisteredAt(registeredAt);
-    user.setCreatedAt(createdAt);
 
+
+    //builder 를 사용한 방법
+        User u = User.builder()
+                .account(account)
+                .password(password)
+                .status(status)
+                .build();
+        //builder 를 이용하여 원하는 매개변수만 넣어주는 방법
 
 
        User newUser = userRepository.save(user);
@@ -52,6 +58,9 @@ public class UserRepositoryTest extends StudyApplicationTests {
     public void read(){
         User user = userRepository.findFirstByPhoneNumberOrderByIdDesc("010-1111-2222");
 
+       //  User u  = new User().setAccount().setEmail() ...; 이렇게도 가능
+        //chain 메소드를 통해 setmethod 를 사용하지 않고
+       // user.setEmail().setPhoneNumber() ...이렇게 이어서 set 방법 가능
         user.getOrderGroupList().stream().forEach(orderGroup -> {
             System.out.println("----------------장바구니------------------- ");
             System.out.println("수령인"+orderGroup.getRevName());
