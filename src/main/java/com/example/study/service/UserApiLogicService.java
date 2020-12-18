@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.xml.ws.ServiceMode;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UserApiLogicService implements CrudInterface<UserApiRequest, UserApiResponse> {
@@ -53,17 +54,66 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
 
     @Override
     public Header<UserApiResponse> read(Long id) {
-        return null;
+
+        //id ->  repository getOne, getById
+      return userRepository.findById(id)
+                .map(user ->response(user))
+                .orElseGet( //없다면
+                        ()->Header.ERROR("NO DATA"));
+
     }
 
     @Override
     public Header<UserApiResponse> update(Header<UserApiRequest> request) {
-        return null;
+
+        // 1. data
+        UserApiRequest userApiRequest = request.getData();
+
+
+        //2. id -> user
+
+       Optional<User> optional = userRepository.findById(userApiRequest.getId());
+
+       return optional.map(user -> {
+           //3.  ㅇㅁㅅㅁ  -> update
+           // 해당 아이디에서 대해 update
+           user.setAccount(userApiRequest.getAccount())
+                   .setPassword(userApiRequest.getPassword())
+                   .setStatus(userApiRequest.getStatus())
+                   .setPhoneNumber(userApiRequest.getPhoneNumber())
+                   .setEmail(userApiRequest.getEmail())
+                   .setRegisteredAt(userApiRequest.getRegisteredAt())
+                   .setUnregisteredAt(userApiRequest.getUnregisteredAt());
+
+           return user;
+       })
+               .map(user -> userRepository.save(user)) //update
+               .map(updateUser->response(updateUser)) //userApiResponse 생성
+               .orElseGet(() ->Header.ERROR("NO data"));
+
+
+
+        //4. userApriResponse
+
     }
 
     @Override
     public Header delete(Long id) {
-        return null;
+
+        // id -> repository -> user
+           Optional<User> optional = userRepository.findById(id);
+
+
+        // repository -> delete
+        return optional.map(user -> {
+            userRepository.delete(user);
+
+            return Header.OK();
+        }).orElseGet(()-> Header.ERROR("No data"));
+
+        //response return
+
+
     }
 
     private Header<UserApiResponse> response(User user){
