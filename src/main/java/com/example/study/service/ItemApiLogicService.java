@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemApiResponse> {
@@ -48,17 +49,62 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
 
     @Override
     public Header<ItemApiResponse> read(Long id) {
-        return null;
+
+        // id -> repository getOne , getBy id
+
+        return itemRepository.findById(id)
+                .map(item -> response(item))
+                .orElseGet(// 없다면
+                        ()-> Header.ERROR("No data"));
+                        // );
+
     }
 
     @Override
     public Header<ItemApiResponse> update(Header<ItemApiRequest> request) {
-        return null;
+        //1. data
+        ItemApiRequest itemApiRequest = request.getData();
+
+        //2. id -> item
+
+        Optional<Item> optional = itemRepository.findById(itemApiRequest.getId());
+
+        return optional.map(item->{
+
+            item.setStatus(itemApiRequest.getStatus())
+                    .setName(itemApiRequest.getName())
+                    .setTitle(itemApiRequest.getTitle())
+                    .setContent(itemApiRequest.getContent())
+                    .setPrice(itemApiRequest.getPrice())
+                    .setBrandName(itemApiRequest.getBrandName())
+                    .setRegisteredAt(itemApiRequest.getRegisteredAt())
+                    .setUnregisteredAt(itemApiRequest.getUnregisteredAt())
+                    .setPartner(partnerRepository.getOne(itemApiRequest.getPartnerId()));
+
+            return item;
+        })
+        .map(item -> itemRepository.save(item))
+                .map(update -> response(update))
+                .orElseGet(() -> Header.ERROR("No data"));
+
     }
 
     @Override
     public Header delete(Long id) {
-        return null;
+        // id -> repository -> item
+
+        Optional<Item> optional  = itemRepository.findById(id);
+
+        //repository -> delete
+
+        return  optional.map(item -> {
+            itemRepository.delete(item);
+
+            return Header.OK();
+        }).orElseGet(() -> Header.ERROR("No data"));
+
+        //response return
+
     }
 
 

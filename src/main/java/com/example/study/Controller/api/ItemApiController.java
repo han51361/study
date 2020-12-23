@@ -5,9 +5,11 @@ import com.example.study.model.network.Header;
 import com.example.study.model.network.request.ItemApiRequest;
 import com.example.study.model.network.response.ItemApiResponse;
 import com.example.study.service.ItemApiLogicService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/item")
 public class ItemApiController implements CrudInterface<ItemApiRequest, ItemApiResponse> {
@@ -23,21 +25,24 @@ public class ItemApiController implements CrudInterface<ItemApiRequest, ItemApiR
     }
 
     @Override
-    @GetMapping({"id"})
+    @GetMapping({"id"}) // api/user/{id}
     public Header<ItemApiResponse> read(@PathVariable Long id) {
-
-        return null;
+        log.info("read id : {}",id);
+        return itemApiLogicService.read(id);
     }
 
     @Override
-    @PutMapping("")
+    @PutMapping("") // /api/user
     public Header<ItemApiResponse> update(@RequestBody Header<ItemApiRequest> request) {
-        return null;
+
+
+        return itemApiLogicService.update(request);
     }
 
     @Override
-    @DeleteMapping({"id"})
+    @DeleteMapping({"id"}) //api/user/{id}
     public Header delete(@PathVariable  Long id) {
-        return null;
+        log.info("delete : {}", id );
+        return itemApiLogicService.delete(id);
     }
 }
