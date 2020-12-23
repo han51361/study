@@ -78,8 +78,8 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
                     .setPrice(itemApiRequest.getPrice())
                     .setBrandName(itemApiRequest.getBrandName())
                     .setRegisteredAt(itemApiRequest.getRegisteredAt())
-                    .setUnregisteredAt(itemApiRequest.getUnregisteredAt())
-                    .setPartner(partnerRepository.getOne(itemApiRequest.getPartnerId()));
+                    .setUnregisteredAt(itemApiRequest.getUnregisteredAt());
+
 
             return item;
         })
