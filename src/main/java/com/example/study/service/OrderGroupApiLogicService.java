@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiRequest, OrderGroupApiResponse> {
@@ -53,17 +54,57 @@ public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiReq
 
     @Override
     public Header<OrderGroupApiResponse> read(Long id) {
-        return null;
+
+        return orderGroupRepository.findById(id)
+                .map(orderGroup -> response(orderGroup))
+                .orElseGet(
+                        ()->Header.ERROR("NO data"));
+
     }
 
     @Override
     public Header<OrderGroupApiResponse> update(Header<OrderGroupApiRequest> request) {
-        return null;
+
+        //1. data 불러오기
+        OrderGroupApiRequest orderGroupApiRequest = request.getData();
+
+        //2. id -> ordergroup
+        Optional<OrderGroup> optional = orderGroupRepository.findById(orderGroupApiRequest.getId());
+
+        return  optional.map(orderGroup -> {
+
+            orderGroup.setStatus(orderGroupApiRequest.getStatus())
+                    .setOrderType(orderGroupApiRequest.getOrderType())
+                    .setRevAddress(orderGroupApiRequest.getRevAddress())
+                    .setRevName(orderGroupApiRequest.getRevName())
+                    .setPaymentType(orderGroupApiRequest.getPaymentType())
+                    .setTotalPrice(orderGroupApiRequest.getTotalPrice())
+                    .setTotalQuantity(orderGroupApiRequest.getTotalQuantity())
+                    .setOrderAt(orderGroupApiRequest.getOrderAt())
+                    .setArrivalDate(orderGroupApiRequest.getArrivalDate());
+
+            return orderGroup;
+
+        }).map(orderGroup -> orderGroupRepository.save(orderGroup))
+                .map(update -> response(update))
+                .orElseGet(() -> Header.ERROR("No data"));
+
+
     }
 
     @Override
     public Header delete(Long id) {
-        return null;
+        // 1. id -> repository -> ordergroup 찾기
+
+        Optional<OrderGroup> optional = orderGroupRepository.findById(id);
+
+        //repository 에서 찾은 데이터 삭제
+        return optional.map(orderGroup -> {
+            orderGroupRepository.delete(orderGroup);
+
+            return  Header.OK();
+        }).orElseGet(() -> Header.ERROR("No data"));
+
     }
 
     private Header<OrderGroupApiResponse> response(OrderGroup orderGroup) {
