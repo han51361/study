@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class ItemRepositoryTest extends StudyApplicationTests {
         item.setName("Macbook Pro");
         item.setTitle("16's Mac");
         item.setContent("16년형 맥북프로");
-        item.setPrice(3400000);
+        item.setPrice(BigDecimal.valueOf(3400000));
         item.setBrandName("Apple");
         item.setRegisteredAt(LocalDateTime.now());
         item.setCreatedAt(LocalDateTime.now());
