@@ -1,6 +1,7 @@
 package com.example.study.model.entity;
 
 
+import com.example.study.model.enumclass.OrderType;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedBy;
@@ -28,9 +29,11 @@ public class OrderGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private String status;
 
-    private String orderType; // 개별이냐 일괄 배송이냐
+    @Enumerated(EnumType.STRING)
+    private OrderType orderType; // 개별이냐 일괄 배송이냐
 
     private String revAddress;
 
