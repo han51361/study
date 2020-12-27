@@ -14,13 +14,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiRequest, OrderGroupApiResponse> {
+public class OrderGroupApiLogicService extends BaseService<OrderGroupApiRequest, OrderGroupApiResponse,OrderGroup> {
 
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private OrderGroupRepository orderGroupRepository;
 
     @Override
     public Header<OrderGroupApiResponse> create(Header<OrderGroupApiRequest> request) {
@@ -42,7 +40,7 @@ public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiReq
                 .user(userRepository.getOne(orderGroupApiRequest.getUserId()))
                 .build();
 
-        OrderGroup neworderGroup = orderGroupRepository.save(orderGroup);
+        OrderGroup neworderGroup = baseRepository.save(orderGroup);
 
         //3. data return
 
@@ -55,7 +53,7 @@ public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiReq
     @Override
     public Header<OrderGroupApiResponse> read(Long id) {
 
-        return orderGroupRepository.findById(id)
+        return baseRepository.findById(id)
                 .map(orderGroup -> response(orderGroup))
                 .orElseGet(
                         ()->Header.ERROR("NO data"));
@@ -69,7 +67,7 @@ public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiReq
         OrderGroupApiRequest orderGroupApiRequest = request.getData();
 
         //2. id -> ordergroup
-        Optional<OrderGroup> optional = orderGroupRepository.findById(orderGroupApiRequest.getId());
+        Optional<OrderGroup> optional = baseRepository.findById(orderGroupApiRequest.getId());
 
         return  optional.map(orderGroup -> {
 
@@ -85,7 +83,7 @@ public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiReq
 
             return orderGroup;
 
-        }).map(orderGroup -> orderGroupRepository.save(orderGroup))
+        }).map(orderGroup -> baseRepository.save(orderGroup))
                 .map(update -> response(update))
                 .orElseGet(() -> Header.ERROR("No data"));
 
@@ -96,11 +94,11 @@ public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiReq
     public Header delete(Long id) {
         // 1. id -> repository -> ordergroup 찾기
 
-        Optional<OrderGroup> optional = orderGroupRepository.findById(id);
+        Optional<OrderGroup> optional = baseRepository.findById(id);
 
         //repository 에서 찾은 데이터 삭제
         return optional.map(orderGroup -> {
-            orderGroupRepository.delete(orderGroup);
+            baseRepository.delete(orderGroup);
 
             return  Header.OK();
         }).orElseGet(() -> Header.ERROR("No data"));

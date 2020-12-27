@@ -17,11 +17,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class UserApiLogicService implements CrudInterface<UserApiRequest, UserApiResponse> {
+public class UserApiLogicService extends BaseService<UserApiRequest, UserApiResponse,User> {
 
-
-    @Autowired
-    private UserRepository userRepository;
 
 
 
@@ -42,7 +39,7 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
                 .registeredAt(LocalDateTime.now())
                 .build();
 
-        User newUser = userRepository.save(user);
+        User newUser = baseRepository.save(user);
 
 
         //3. 생성된 데이터 -> UserApiResponse return
@@ -57,7 +54,7 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
     public Header<UserApiResponse> read(Long id) {
 
         //id ->  repository getOne, getById
-      return userRepository.findById(id)
+      return baseRepository.findById(id)
                 .map(user ->response(user))
                 .orElseGet( //없다면
                         ()->Header.ERROR("NO DATA"));
@@ -73,7 +70,7 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
 
         //2. id -> user
 
-       Optional<User> optional = userRepository.findById(userApiRequest.getId());
+       Optional<User> optional = baseRepository.findById(userApiRequest.getId());
 
        return optional.map(user -> {
            //3.  ㅇㅁㅅㅁ  -> update
@@ -88,7 +85,7 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
 
            return user;
        })
-               .map(user -> userRepository.save(user)) //update
+               .map(user -> baseRepository.save(user)) //update
                .map(updateUser->response(updateUser)) //userApiResponse 생성
                .orElseGet(() ->Header.ERROR("NO data"));
 
@@ -102,12 +99,12 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
     public Header delete(Long id) {
 
         // id -> repository -> user
-           Optional<User> optional = userRepository.findById(id);
+           Optional<User> optional = baseRepository.findById(id);
 
 
         // repository -> delete
         return optional.map(user -> {
-            userRepository.delete(user);
+            baseRepository.delete(user);
 
             return Header.OK();
         }).orElseGet(()-> Header.ERROR("No data"));

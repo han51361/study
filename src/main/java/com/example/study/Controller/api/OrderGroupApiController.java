@@ -2,6 +2,7 @@ package com.example.study.Controller.api;
 
 import com.example.study.Controller.CrudController;
 import com.example.study.ifs.CrudInterface;
+import com.example.study.model.entity.OrderGroup;
 import com.example.study.model.network.Header;
 import com.example.study.model.network.request.OrderGroupApiRequest;
 import com.example.study.model.network.response.OrderGroupApiResponse;
@@ -15,13 +16,6 @@ import javax.annotation.PostConstruct;
 @Slf4j
 @RestController
 @RequestMapping("/api/ordergroup")
-public class OrderGroupApiController extends CrudController<OrderGroupApiRequest, OrderGroupApiResponse> {
+public class OrderGroupApiController extends CrudController<OrderGroupApiRequest, OrderGroupApiResponse, OrderGroup> {
 
-    @Autowired
-    private OrderGroupApiLogicService orderGroupApiLogicService;
-
-    @PostConstruct
-    public void init(){
-        this.baseService = orderGroupApiLogicService;
-    }
 }

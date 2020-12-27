@@ -14,13 +14,12 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemApiResponse> {
+public class ItemApiLogicService extends BaseService<ItemApiRequest, ItemApiResponse, Item> {
 
     @Autowired
     private PartnerRepository partnerRepository;
 
-    @Autowired
-    private ItemRepository itemRepository;
+
     @Override
     public Header<ItemApiResponse> create(Header<ItemApiRequest> request) {
         // 1.  request data
@@ -38,7 +37,7 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
                 .partner(partnerRepository.getOne(itemApiRequest.getPartnerId()))
                 .build();
 
-        Item newItem = itemRepository.save(item);
+        Item newItem = baseRepository.save(item);
 
         //3. 생성된 데이터 -> itemRepository return
 
@@ -51,7 +50,7 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
 
         // id -> repository getOne , getBy id
 
-        return itemRepository.findById(id)
+        return baseRepository.findById(id)
                 .map(item -> response(item))
                 .orElseGet(// 없다면
                         ()-> Header.ERROR("No data"));
@@ -66,7 +65,7 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
 
         //2. id -> item
 
-        Optional<Item> optional = itemRepository.findById(itemApiRequest.getId());
+        Optional<Item> optional = baseRepository.findById(itemApiRequest.getId());
 
         return optional.map(item->{
 
@@ -82,7 +81,7 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
 
             return item;
         })
-        .map(item -> itemRepository.save(item))
+        .map(item -> baseRepository.save(item))
                 .map(update -> response(update))
                 .orElseGet(() -> Header.ERROR("No data"));
 
@@ -92,12 +91,12 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
     public Header delete(Long id) {
         // id -> repository -> item
 
-        Optional<Item> optional  = itemRepository.findById(id);
+        Optional<Item> optional  = baseRepository.findById(id);
 
         //repository -> delete
 
         return  optional.map(item -> {
-            itemRepository.delete(item);
+            baseRepository.delete(item);
 
             return Header.OK();
         }).orElseGet(() -> Header.ERROR("No data"));
