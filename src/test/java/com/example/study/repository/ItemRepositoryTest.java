@@ -2,6 +2,7 @@ package com.example.study.repository;
 
 import com.example.study.StudyApplicationTests;
 import com.example.study.model.entity.Item;
+import com.example.study.model.enumclass.ItemStatus;
 import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class ItemRepositoryTest extends StudyApplicationTests {
     public void create(){
         Item item = new Item();
 
-        item.setStatus("Unregistered");
+        item.setStatus(ItemStatus.REGISTERED);
         item.setName("Macbook Pro");
         item.setTitle("16's Mac");
         item.setContent("16년형 맥북프로");
