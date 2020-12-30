@@ -5,21 +5,28 @@ import com.example.study.ifs.CrudInterface;
 import com.example.study.model.entity.User;
 import com.example.study.model.enumclass.UserStatus;
 import com.example.study.model.network.Header;
+import com.example.study.model.network.Pagination;
 import com.example.study.model.network.request.UserApiRequest;
 import com.example.study.model.network.response.UserApiResponse;
 import com.example.study.repository.UserRepository;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.xml.ws.ServiceMode;
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserApiLogicService extends BaseService<UserApiRequest, UserApiResponse,User> {
 
-
+   @Autowired
+   UserRepository userRepository;
 
 
     @Override
@@ -47,7 +54,7 @@ public class UserApiLogicService extends BaseService<UserApiRequest, UserApiResp
 
 
 
-        return response(newUser);
+        return Header.OK(response(newUser));
     }
 
     @Override
@@ -56,6 +63,7 @@ public class UserApiLogicService extends BaseService<UserApiRequest, UserApiResp
         //id ->  repository getOne, getById
       return baseRepository.findById(id)
                 .map(user ->response(user))
+              .map(userApiResponse -> Header.OK(userApiResponse))
                 .orElseGet( //없다면
                         ()->Header.ERROR("NO DATA"));
 
@@ -86,7 +94,8 @@ public class UserApiLogicService extends BaseService<UserApiRequest, UserApiResp
            return user;
        })
                .map(user -> baseRepository.save(user)) //update
-               .map(updateUser->response(updateUser)) //userApiResponse 생성
+               .map(updateUser->response(updateUser))
+               .map(Header::OK)
                .orElseGet(() ->Header.ERROR("NO data"));
 
 
@@ -114,7 +123,7 @@ public class UserApiLogicService extends BaseService<UserApiRequest, UserApiResp
 
     }
 
-    private Header<UserApiResponse> response(User user){
+    private UserApiResponse response(User user){
         // user -> userapiresponse
 
         UserApiResponse userApiResponse = UserApiResponse.builder()
@@ -129,6 +138,24 @@ public class UserApiLogicService extends BaseService<UserApiRequest, UserApiResp
                 .build();
 
         // Header + data
-        return Header.OK(userApiResponse);
+        return userApiResponse;
+    }
+    @GetMapping("")
+    @Override
+    public Header<List<UserApiResponse>> search(Pageable pageable) {
+        Page<User> users = (Page<User>) userRepository.findAll(pageable);
+
+      List<UserApiResponse> userApiResponseList = users.stream()
+              .map(user -> response(user))
+              .collect(Collectors.toList());
+
+        Pagination pagination = Pagination.builder()
+                .totalPages(users.getTotalPages())
+                .totalElements(users.getTotalElements())
+                .currentPage(users.getNumber())
+                .currentElements(users.getNumberOfElements())
+                .build();
+
+      return Header.OK(userApiResponseList,pagination);
     }
 }
