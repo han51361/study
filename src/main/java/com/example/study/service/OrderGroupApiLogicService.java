@@ -5,12 +5,15 @@ import com.example.study.model.entity.OrderGroup;
 import com.example.study.model.network.Header;
 import com.example.study.model.network.request.OrderGroupApiRequest;
 import com.example.study.model.network.response.OrderGroupApiResponse;
+import com.example.study.model.network.response.UserApiResponse;
 import com.example.study.repository.OrderGroupRepository;
 import com.example.study.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -105,7 +108,7 @@ public class OrderGroupApiLogicService extends BaseService<OrderGroupApiRequest,
 
     }
 
-    private Header<OrderGroupApiResponse> response(OrderGroup orderGroup) {
+    public Header<OrderGroupApiResponse> response(OrderGroup orderGroup) {
 
         OrderGroupApiResponse orderGroupApiResponse = OrderGroupApiResponse.builder()
                 .id(orderGroup.getId())
@@ -122,5 +125,10 @@ public class OrderGroupApiLogicService extends BaseService<OrderGroupApiRequest,
                 .build();
 
         return Header.OK(orderGroupApiResponse);
+    }
+
+    @Override
+    public Header<List<UserApiResponse>> search(Pageable pageable) {
+        return null;
     }
 }

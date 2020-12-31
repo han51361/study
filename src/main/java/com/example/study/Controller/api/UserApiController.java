@@ -7,6 +7,7 @@ import com.example.study.model.entity.User;
 import com.example.study.model.network.Header;
 import com.example.study.model.network.request.UserApiRequest;
 import com.example.study.model.network.response.UserApiResponse;
+import com.example.study.model.network.response.UserOrderInfoApiResponse;
 import com.example.study.repository.UserRepository;
 import com.example.study.service.UserApiLogicService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,16 @@ public class UserApiController extends CrudController<UserApiRequest, UserApiRes
 
         @Autowired
         UserApiLogicService userApiLogicService;
-    public Header<List<UserApiResponse>> search(@PageableDefault(sort = "id", direction = Sort.Direction.ASC, page = 10,size = 15) Pageable pageable){
+
+
+        @GetMapping("/{id}/orderinfo")
+        public Header<UserOrderInfoApiResponse> orderInfo(@PathVariable Long id){
+
+            return userApiLogicService.orderInfo(id);
+        }
+
+
+        public Header<List<UserApiResponse>> search(@PageableDefault(sort = "id", direction = Sort.Direction.ASC, page = 10,size = 15) Pageable pageable){
         log.info("{}", pageable);
         //pageing 처리
         return userApiLogicService.search(pageable);

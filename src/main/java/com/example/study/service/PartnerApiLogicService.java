@@ -4,7 +4,11 @@ import com.example.study.model.entity.Partner;
 import com.example.study.model.network.Header;
 import com.example.study.model.network.request.PartnerApiRequest;
 import com.example.study.model.network.response.PartnerApiResponse;
+import com.example.study.model.network.response.UserApiResponse;
 import org.springframework.stereotype.Service;
+
+import java.awt.print.Pageable;
+import java.util.List;
 
 @Service
 public class PartnerApiLogicService extends BaseService<PartnerApiRequest, PartnerApiResponse, Partner>{
@@ -49,5 +53,10 @@ public class PartnerApiLogicService extends BaseService<PartnerApiRequest, Partn
                 .build();
 
         return Header.OK(response);
+    }
+
+    @Override
+    public Header<List<UserApiResponse>> search(Pageable pageable) {
+        return null;
     }
 }

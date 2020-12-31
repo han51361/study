@@ -11,6 +11,7 @@ import org.apache.tomcat.jni.Local;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -35,4 +36,5 @@ public class UserApiResponse {
 
     private LocalDateTime unregisteredAt;
 
+    private List<OrderGroupApiResponse> orderGroupApiResponseList;
 }

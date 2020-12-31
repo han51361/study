@@ -5,12 +5,15 @@ import com.example.study.model.entity.Item;
 import com.example.study.model.network.Header;
 import com.example.study.model.network.request.ItemApiRequest;
 import com.example.study.model.network.response.ItemApiResponse;
+import com.example.study.model.network.response.UserApiResponse;
 import com.example.study.repository.ItemRepository;
 import com.example.study.repository.PartnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -106,7 +109,7 @@ public class ItemApiLogicService extends BaseService<ItemApiRequest, ItemApiResp
     }
 
 
-    private Header<ItemApiResponse> response(Item item){
+    public Header<ItemApiResponse> response(Item item){
 
         ItemApiResponse itemApiResponse = ItemApiResponse.builder()
                 .id(item.getId())
@@ -123,5 +126,10 @@ public class ItemApiLogicService extends BaseService<ItemApiRequest, ItemApiResp
 
 
         return Header.OK(itemApiResponse);
+    }
+
+    @Override
+    public Header<List<UserApiResponse>> search(Pageable pageable) {
+        return null;
     }
 }
