@@ -127,8 +127,6 @@ public class OrderGroupApiLogicService extends BaseService<OrderGroupApiRequest,
         return Header.OK(orderGroupApiResponse);
     }
 
-    @Override
-    public Header<List<UserApiResponse>> search(Pageable pageable) {
-        return null;
-    }
+
+
 }

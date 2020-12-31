@@ -8,6 +8,7 @@ import com.example.study.model.network.response.ItemApiResponse;
 import com.example.study.model.network.response.UserApiResponse;
 import com.example.study.repository.ItemRepository;
 import com.example.study.repository.PartnerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,101 +18,88 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ItemApiLogicService extends BaseService<ItemApiRequest, ItemApiResponse, Item> {
 
-    @Autowired
-    private PartnerRepository partnerRepository;
-
+    private final PartnerRepository partnerRepository;
 
     @Override
     public Header<ItemApiResponse> create(Header<ItemApiRequest> request) {
-        // 1.  request data
-        ItemApiRequest itemApiRequest = request.getData();
 
-        //2 . item 생성
-        Item item  = Item.builder()
-                .status(itemApiRequest.getStatus())
-                .name(itemApiRequest.getName())
-                .title(itemApiRequest.getTitle())
-                .content(itemApiRequest.getContent())
-                .price(itemApiRequest.getPrice())
-                .brandName(itemApiRequest.getBrandName())
-                .registeredAt(LocalDateTime.now())
-                .partner(partnerRepository.getOne(itemApiRequest.getPartnerId()))
-                .build();
+        return Optional.ofNullable(request.getData())
+                .map(body ->{
+                    Item item = Item.builder()
+                            .status(body.getStatus())
+                            .name(body.getName())
+                            .title(body.getTitle())
+                            .content(body.getContent())
+                            .price(body.getPrice())
+                            .brandName(body.getBrandName())
+                            .registeredAt(LocalDateTime.now())
+                            .partner(partnerRepository.getOne(body.getPartnerId()))
+                            .build();
 
-        Item newItem = baseRepository.save(item);
-
-        //3. 생성된 데이터 -> itemRepository return
-
-        return response(newItem);
-
+                    return item;
+                })
+                .map(newItem -> baseRepository.save(newItem))
+                .map(newItem -> response(newItem))
+                .orElseGet(()->Header.ERROR("데이터 없음"));
     }
 
     @Override
     public Header<ItemApiResponse> read(Long id) {
 
-        // id -> repository getOne , getBy id
-
         return baseRepository.findById(id)
                 .map(item -> response(item))
-                .orElseGet(// 없다면
-                        ()-> Header.ERROR("No data"));
-                        // );
-
+                .orElseGet(()-> Header.ERROR("데이터 없음"));
     }
 
     @Override
     public Header<ItemApiResponse> update(Header<ItemApiRequest> request) {
-        //1. data
-        ItemApiRequest itemApiRequest = request.getData();
 
-        //2. id -> item
+        return Optional.ofNullable(request.getData())
+                .map(body ->{
+                    return baseRepository.findById(body.getId());
+                })
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(item -> {
 
-        Optional<Item> optional = baseRepository.findById(itemApiRequest.getId());
+                    ItemApiRequest body = request.getData();
+                    item.setStatus(body.getStatus())
+                            .setTitle(body.getTitle())
+                            .setContent(body.getContent())
+                            .setName(body.getName())
+                            .setPrice(body.getPrice())
+                            .setBrandName(body.getBrandName())
+                            .setPartner(partnerRepository.getOne(body.getPartnerId()))
+                            .setStatus(body.getStatus())
+                            .setRegisteredAt(body.getRegisteredAt())
+                            .setUnregisteredAt(body.getUnregisteredAt())
+                    ;
+                    return item;
 
-        return optional.map(item->{
-
-            item.setStatus(itemApiRequest.getStatus())
-                    .setName(itemApiRequest.getName())
-                    .setTitle(itemApiRequest.getTitle())
-                    .setContent(itemApiRequest.getContent())
-                    .setPrice(itemApiRequest.getPrice())
-                    .setBrandName(itemApiRequest.getBrandName())
-                    .setRegisteredAt(itemApiRequest.getRegisteredAt())
-                    .setUnregisteredAt(itemApiRequest.getUnregisteredAt());
-
-
-            return item;
-        })
-        .map(item -> baseRepository.save(item))
-                .map(update -> response(update))
-                .orElseGet(() -> Header.ERROR("No data"));
+                })
+                .map(changeItem -> baseRepository.save(changeItem))
+                .map(newItem -> response(newItem))
+                .orElseGet(()->Header.ERROR("데이터 없음"));
 
     }
 
     @Override
     public Header delete(Long id) {
-        // id -> repository -> item
 
-        Optional<Item> optional  = baseRepository.findById(id);
-
-        //repository -> delete
-
-        return  optional.map(item -> {
-            baseRepository.delete(item);
-
-            return Header.OK();
-        }).orElseGet(() -> Header.ERROR("No data"));
-
-        //response return
-
+        return baseRepository.findById(id)
+                .map(item -> {
+                    baseRepository.delete(item);
+                    return Header.OK();
+                })
+                .orElseGet(()->Header.ERROR("데이터 없음"));
     }
-
 
     public Header<ItemApiResponse> response(Item item){
 
-        ItemApiResponse itemApiResponse = ItemApiResponse.builder()
+        ItemApiResponse body = ItemApiResponse.builder()
                 .id(item.getId())
                 .status(item.getStatus())
                 .name(item.getName())
@@ -124,12 +112,8 @@ public class ItemApiLogicService extends BaseService<ItemApiRequest, ItemApiResp
                 .partnerId(item.getPartner().getId())
                 .build();
 
-
-        return Header.OK(itemApiResponse);
+        return Header.OK(body);
     }
 
-    @Override
-    public Header<List<UserApiResponse>> search(Pageable pageable) {
-        return null;
-    }
+
 }

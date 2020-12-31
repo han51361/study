@@ -29,7 +29,7 @@ public class OrderGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+
     private String status;
 
     @Enumerated(EnumType.STRING)

@@ -55,8 +55,4 @@ public class PartnerApiLogicService extends BaseService<PartnerApiRequest, Partn
         return Header.OK(response);
     }
 
-    @Override
-    public Header<List<UserApiResponse>> search(Pageable pageable) {
-        return null;
-    }
 }

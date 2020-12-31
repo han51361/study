@@ -21,6 +21,7 @@ import java.util.List;
 @ToString(exclude = {"itemList","categoty"})
 @EntityListeners(AuditingEntityListener.class)
 @Builder
+
 @Accessors(chain = true)
 public class Partner {
     // entiny 를 작성할 때는 camel case

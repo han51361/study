@@ -13,13 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/item")
 public class ItemApiController extends CrudController<ItemApiRequest, ItemApiResponse, Item> {
-
-
-
-
 
 }

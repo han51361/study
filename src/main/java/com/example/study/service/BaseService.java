@@ -12,14 +12,10 @@ import java.awt.print.Pageable;
 import java.util.List;
 
 
-@Component  //autowired하기위해 component 선
+@Component
 public abstract class BaseService<Req,Res,Entity> implements CrudInterface<Req,Res> {
 
-    @Autowired(required = false) // 필수는 아니다.
+    @Autowired(required = false)
     protected JpaRepository<Entity,Long> baseRepository;
-
-
-    public abstract Header<List<UserApiResponse>> search(Pageable pageable);
-
-
+    // JpaRepository<Item,Long>
 }

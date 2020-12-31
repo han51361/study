@@ -15,7 +15,7 @@ public abstract class CrudController<Req,Res,Entity> implements CrudInterface<Re
 
     @Override
     @PostMapping("")
-    public Header<Res> create(@RequestBody  Header<Req> request) {
+    public Header<Res> create(@RequestBody Header<Req> request) {
         return baseService.create(request);
     }
 
